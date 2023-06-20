@@ -37,13 +37,12 @@ lista* list_new_insert(node** new, lista** cur_lista)
     head_pilha = (node*) malloc(sizeof(node));
     head_pilha->next = NULL;
 
-    node* cur_pilha = head_pilha;
-    stacktop(new, &cur_pilha);
+    stacktop(new, &head_pilha);
 
     lista* newer = NULL;
     newer = (lista*) malloc(sizeof(lista)); 
 
-    newer->pilha = cur_pilha;
+    newer->pilha = head_pilha;
     newer->next  = (*cur_lista)->next;
     (*cur_lista)->next = newer;
 
@@ -109,7 +108,7 @@ int main()
                 if(x==j+1)
                 {
                     j++;
-                   list_new_insert(&new, &cur_lista);  
+                    list_new_insert(&new, &cur_lista);  
                 }
                 else if(x==0)
                 {
