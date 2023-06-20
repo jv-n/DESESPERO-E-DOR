@@ -31,18 +31,26 @@ node* stackcopy(node** cur_source, node** cur_dest)
     return (*cur_dest);
 }
 
-lista* list_new_insert(node** new, lista** cur_lista)
+node* create_new_stack()
 {
     node* head_pilha;
     head_pilha = (node*) malloc(sizeof(node));
     head_pilha->next = NULL;
 
-    stacktop(new, &head_pilha);
+    node*cur_pilha = head_pilha;
+
+    return cur_pilha;
+}
+
+lista* list_new_insert(node** new, lista** cur_lista)
+{
+    node* cur_pilha = create_new_stack();
+    stacktop(new, &cur_pilha);
 
     lista* newer = NULL;
     newer = (lista*) malloc(sizeof(lista)); 
 
-    newer->pilha = head_pilha;
+    newer->pilha = cur_pilha;
     newer->next  = (*cur_lista)->next;
     (*cur_lista)->next = newer;
 
@@ -118,9 +126,9 @@ int main()
                 {
                     cur_lista = head;
                     int k = 0;
-                    while(k<x)
+                    while(k<x && cur_lista->next != NULL)
                     {
-                        cur_lista->next++;
+                        cur_lista = cur_lista->next;
                         k++;
                     }
                     pilha_ops(&cur_lista, &new, &j);
@@ -132,11 +140,11 @@ int main()
                 printf("caso %d:", i);
                 if(cur_lista!=NULL)
                 {
-                    cur_lista = head->next;
+                    cur_lista = head;
                     while(cur_lista->next!=NULL)
                     {
                         printf(" %d", cur_lista->pilha->val);
-                        cur_lista->next++;
+                        cur_lista = cur_lista->next;
                     }
                     printf("\n");
                     free(cur_lista);
