@@ -38,10 +38,14 @@ lista* list_new_insert(node** new, lista** cur_lista)
     head_pilha->next = NULL;
 
     node* cur_pilha = head_pilha;
-    stacktop(&new, &cur_pilha);
+    stacktop(new, &cur_pilha);
 
-    cur_pilha->next = (*cur_lista)->next;
-    (*cur_lista)->next = cur_pilha;
+    lista* newer = NULL;
+    newer = (lista*) malloc(sizeof(lista)); 
+
+    newer->pilha = cur_pilha;
+    newer->next  = (*cur_lista)->next;
+    (*cur_lista)->next = newer;
 
     return (*cur_lista);
 }
@@ -59,14 +63,14 @@ void pilha_ops(lista** cur_lista, node** new, int* j)
 {
     if((*cur_lista)->pilha->val!=(*new)->val)
     {
-        stacktop(&new, &(*cur_lista)->pilha);
+        stacktop(new, &(*cur_lista)->pilha);
     } else if((*cur_lista)->pilha->next != NULL && (*cur_lista)->pilha->val == (*new)->val)
     {
         stackpop(&(*cur_lista)->pilha);
         if((*cur_lista)->pilha->next == NULL)
         {
             (*j)--;
-            list_delete (&cur_lista);
+            list_delete (cur_lista);
         }
     }
 }
@@ -143,8 +147,6 @@ int main()
 
         i++;
     }
-
-
     
     return 0;
 }
