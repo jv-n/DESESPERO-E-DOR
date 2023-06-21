@@ -8,7 +8,7 @@ typedef struct node{
 } node;
 
 typedef struct lista{
-    struct node *pilha;
+    node *pilha;
     struct lista *next;
 } lista;
 
@@ -31,108 +31,106 @@ node* stackcopy(node** cur_source, node** cur_dest)
     return (*cur_dest);
 }
 
-node* create_new_stack()
+node* create_stack()
 {
-    node* head_pilha;
-    head_pilha = (node*) malloc(sizeof(node));
-    head_pilha->next = NULL;
+    node* head = (node*) malloc(sizeof(node));
+    head->next = NULL;
 
-    node*cur_pilha = head_pilha;
-
-    return cur_pilha;
+    return head;
 }
 
 lista* list_new_insert(node** new, lista** cur_lista)
 {
-    node* cur_pilha = create_new_stack();
-    stacktop(new, &cur_pilha);
-
-    lista* newer = NULL;
-    newer = (lista*) malloc(sizeof(lista)); 
-
-    newer->pilha = cur_pilha;
-    newer->next  = (*cur_lista)->next;
+    
+    lista* newer = (lista*) malloc(sizeof(lista));
+    newer->pilha = create_stack();
+    stacktop(new, &newer->pilha); 
+    newer->next = (*cur_lista)->next;
+    
     (*cur_lista)->next = newer;
-
+    (*cur_lista) = (*cur_lista)->next;    
+      
     return (*cur_lista);
-}
-
-lista* list_delete (lista** cur_lista)
-{
-    lista* pointer;
-    pointer = (*cur_lista)->next;
-    (*cur_lista)->next = pointer->next;
-    free(pointer);
-    return (*cur_lista);
-}
-
-void pilha_ops(lista** cur_lista, node** new, int* j)
-{
-    if((*cur_lista)->pilha->val!=(*new)->val)
-    {
-        stacktop(new, &(*cur_lista)->pilha);
-    } else if((*cur_lista)->pilha->next != NULL && (*cur_lista)->pilha->val == (*new)->val)
-    {
-        stackpop(&(*cur_lista)->pilha);
-        if((*cur_lista)->pilha->next == NULL)
-        {
-            (*j)--;
-            list_delete (cur_lista);
-        }
-    }
 }
 
 int main()
 {
-    char controle[5] = "GO";
+    char controle[3000000] = "GO";
     int partidas;
-
-    lista* head;
-    head = (lista*) malloc(sizeof(lista));   //lista de pilhas
-    head->next = NULL;
 
     scanf("%d\n", &partidas);
     
     int i = 0;
     int j = 0;
-    int x;
 
     while(i<partidas)
     {
+        lista* head;
+        head = (lista*) malloc(sizeof(lista));   //lista de pilhas
+        head->next = NULL;
         lista* cur_lista = head;
         strcpy(controle, "GO");
         j = 0; //numero de pilhas na partida
         while(strcmp(controle, "END")!= 0)
         {
-            scanf(" %4[^\n]", controle);
+            scanf(" %2999999[^\n]", controle);
             node* new = (node*) malloc(sizeof(node));
             
             if(strcmp(controle, "END")!= 0)
             {
-                x = atoi(controle);
+                int x = atoi(controle);
                 char* aux = strstr(controle, " ");
                 new->val = atoi(aux);
+                aux = NULL;
 
                 if(x==j+1)
                 {
                     j++;
-                    list_new_insert(&new, &cur_lista);  
+                    cur_lista = list_new_insert(&new, &cur_lista); 
                 }
                 else if(x==0)
                 {
                     j++;
+                    cur_lista = head;
+                    cur_lista = list_new_insert(&new, &cur_lista);
                 }
-                else if (x<j && x>0)
+                else if (x<=j && x>0)
                 {
                     cur_lista = head;
                     int k = 0;
-                    while(k<x && cur_lista->next != NULL)
+                    while(k<x)
                     {
                         cur_lista = cur_lista->next;
                         k++;
                     }
-                    pilha_ops(&cur_lista, &new, &j);
-                    while(cur_lista->next!=NULL) cur_lista->next++;
+                    
+                    if(cur_lista->pilha->val== new->val)
+                    {
+                        stackpop(&cur_lista->pilha);
+                        if(cur_lista->pilha->next == NULL)
+                        {
+                            j--;
+                            lista* p = cur_lista->next;
+                            cur_lista = head;
+                            int k = 0;
+                            while(k<x-1)
+                            {
+                                cur_lista = cur_lista->next;
+                                k++;
+                            }
+                            cur_lista->next = p;
+                            while(cur_lista->next!=NULL)
+                            {
+                                cur_lista = cur_lista->next;
+                            }
+                            
+                        }
+                    } else stacktop(&new, &cur_lista->pilha);
+ 
+                    while(cur_lista->next!=NULL)
+                    {
+                        cur_lista = cur_lista->next;
+                    }
                 }
             }
             if(strcmp(controle, "END") == 0)
@@ -143,15 +141,15 @@ int main()
                     cur_lista = head;
                     while(cur_lista->next!=NULL)
                     {
-                        printf(" %d", cur_lista->pilha->val);
+                        printf(" %d", cur_lista->next->pilha->val);
                         cur_lista = cur_lista->next;
                     }
                     printf("\n");
-                    free(cur_lista);
                 } else printf("\n");
             }
         }
 
+        
         i++;
     }
     

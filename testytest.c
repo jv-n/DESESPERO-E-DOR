@@ -2,14 +2,16 @@
 #include <string.h>
 #include <stdlib.h>
 
+typedef struct{
+   int a;
+   float b;
+} teste;
 int main()
 {
-   char controle[5] = "1 2";
-   int x = atoi(controle);
-   printf("%d\n", x);
+   char controle[100] = "10 12";
+
    char* aux = strstr(controle, " ");
-   x = atoi(aux);
-   printf("%d\n", x);
+   printf("%d\n", atoi(aux));
 
    return 0;
 }
