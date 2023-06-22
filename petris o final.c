@@ -3,7 +3,7 @@
 #include <string.h>
 
 typedef struct node{
-    int val;
+    unsigned int val;
     struct node *next;
 } node;
 
@@ -55,13 +55,13 @@ lista* list_new_insert(node** new, lista** cur_lista)
 
 int main()
 {
-    char controle[3000000] = "GO";
+    char controle[42] = "GO";
     int partidas;
 
     scanf("%d\n", &partidas);
     
     int i = 0;
-    int j = 0;
+    unsigned int j = 0;
 
     while(i<partidas)
     {
@@ -73,12 +73,12 @@ int main()
         j = 0; //numero de pilhas na partida
         while(strcmp(controle, "END")!= 0)
         {
-            scanf(" %2999999[^\n]", controle);
+            scanf(" %41[^\n]", controle);
             node* new = (node*) malloc(sizeof(node));
             
             if(strcmp(controle, "END")!= 0)
             {
-                int x = atoi(controle);
+                unsigned int x = atoi(controle);
                 char* aux = strstr(controle, " ");
                 new->val = atoi(aux);
                 aux = NULL;
@@ -97,7 +97,7 @@ int main()
                 else if (x<=j && x>0)
                 {
                     cur_lista = head;
-                    int k = 0;
+                    unsigned int k = 0;
                     while(k<x)
                     {
                         cur_lista = cur_lista->next;
@@ -112,7 +112,8 @@ int main()
                             j--;
                             lista* p = cur_lista->next;
                             cur_lista = head;
-                            int k = 0;
+                            unsigned int k = 0;
+                            
                             while(k<x-1)
                             {
                                 cur_lista = cur_lista->next;
@@ -132,16 +133,21 @@ int main()
                         cur_lista = cur_lista->next;
                     }
                 }
+
+                while(cur_lista->next!=NULL)
+                {
+                    cur_lista = cur_lista->next; // vai apontar pro final da lista
+                }                
             }
             if(strcmp(controle, "END") == 0)
             {
                 printf("caso %d:", i);
                 if(cur_lista!=NULL)
                 {
-                    cur_lista = head;
-                    while(cur_lista->next!=NULL)
+                    cur_lista = head->next;
+                    while(cur_lista!=NULL)
                     {
-                        printf(" %d", cur_lista->next->pilha->val);
+                        printf(" %d", cur_lista->pilha->val);
                         cur_lista = cur_lista->next;
                     }
                     printf("\n");
@@ -149,7 +155,6 @@ int main()
             }
         }
 
-        
         i++;
     }
     
