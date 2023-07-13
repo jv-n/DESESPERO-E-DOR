@@ -2,16 +2,10 @@
 #include <string.h>
 #include <stdlib.h>
 
-typedef struct{
-   int a;
-   float b;
-} teste;
 int main()
 {
-   char controle[100] = "10 12";
 
-   char* aux = strstr(controle, " ");
-   printf("%d\n", atoi(aux));
+   printf("%d", 15/2);
 
    return 0;
 }
