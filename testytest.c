@@ -5,7 +5,7 @@
 int main()
 {
 
-   printf("%d", 15/2);
+   printf("%d", (2+2)/2);
 
    return 0;
 }
