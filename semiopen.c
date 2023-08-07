@@ -11,25 +11,32 @@ typedef struct
 
 typedef struct 
 {
+    int andar;
+    int nmr_jazigo;
+    int interaction;
+
+} query_result;
+
+
+typedef struct 
+{
     Jazigo* jazigos;
     int ocupados;
 
 } Cemiterio;
 
 int hash(int id, int andar);
-void add(Cemiterio cemiterio[], int k, int j, int id);
-//int remove(int** cemiterio, int andar, int jazigo);
-//int qry(int** cemiterio, int andar, int jazigo);
-void sort(Cemiterio cemiterio[], int k, int inicio, int fim);
-
+int add(Cemiterio cemiterio[], int k, int j, int id);
+void remover(Cemiterio cemiterio[], int val, int jazigo, int andar);
+query_result query(Cemiterio cemiterio[], int val, int jazigo, int andar);
 
 int main()
 {
-    int andar = 13; 
-    int jazigo = 0;
+    int andar; 
+    int jazigo;
     int id;
     int andares_cheios = 0;
-    char input[11] = "GO";
+    char input[12] = "GO";
 
     scanf("%d %d", &andar, &jazigo);
 
@@ -39,109 +46,188 @@ int main()
     {
         cemiterio[j].ocupados = 0;
         cemiterio[j].jazigos = (Jazigo*) malloc(jazigo*sizeof(Jazigo));
-        for(int m = 0; m<jazigo; m++)
+        for(int x = 0; x<jazigo; x++)
         {
-            cemiterio[j].jazigos[m].valor = 0;
-            cemiterio[j].jazigos[m].estado = 0;
+            cemiterio[j].jazigos[x].estado = 0;
+            cemiterio[j].jazigos[x].valor = 0;
         }
     }
 
     while(strcmp(input, "END")!=0)
     {
-        scanf(" %10[^\n]", input);
+        scanf(" %11[^\n]", input);
 
         if(strcmp(input, "END")!=0)
         {
-            int i = 0;
             char function[4];
-            strncpy(function, input, 4);
+            strncpy(function, input, 3);
+            function[3] = '\0';
             char* aux = strstr(input, " ");
-            id = atoi(aux);
-
+            if(aux!=NULL){
+                aux++;
+                id = atoi(aux);
+            }
             if(strcmp(function, "ADD") == 0)
             {
                 int k = hash(id, andar);
                 andares_cheios = 0;
+                
                 while(cemiterio[k].ocupados == jazigo)
                 {
                     andares_cheios++;
                     if(andares_cheios == andar)
                     {
-                        int* temp = (int*) malloc((andar*jazigo)*sizeof(int));
                         int val = 0;
+                        int* temp = (int*) malloc(sizeof(int)*(andar*jazigo));
                         for(int a = 0; a<andar; a++)
                         {
                             for(int b = 0; b<jazigo; b++)
                             {
-                                if(cemiterio[a].jazigos[b].estado != 2 && cemiterio[a].jazigos[b].estado!= 0)
+                                if(cemiterio[a].jazigos[b].estado == 1)
                                 {
                                     temp[val] = cemiterio[a].jazigos[b].valor;
                                     val++;
-                                }
+                                } 
                             }
                         }
+                        
                         andar = (2*andar)+1;
-                        cemiterio = (Cemiterio*) malloc(cemiterio, andar*sizeof(Cemiterio));
+                        andares_cheios = 0;
+                         
+                        cemiterio = (Cemiterio*) malloc(andar*sizeof(Cemiterio));
+
                         for(int j = 0; j<andar; j++)
                         {
                             cemiterio[j].ocupados = 0;
                             cemiterio[j].jazigos = (Jazigo*) malloc(jazigo*sizeof(Jazigo));
-                            for(int m = 0; m<jazigo; m++)
+                            for(int x = 0; x<jazigo; x++)
                             {
-                                cemiterio[j].jazigos[m].valor = 0;
-                                cemiterio[j].jazigos[m].estado = 0;
+                                cemiterio[j].jazigos[x].estado = 0;
+                                cemiterio[j].jazigos[x].valor = 0;
                             }
                         }
-
-                        for(int j = 0; j<val; j++)
+                         
+                        for(int a = 0; a<val; a++)
                         {
-                            int l = hash(temp[j], andar);
+                            int l = hash(temp[a], andar);
                             while(cemiterio[l].ocupados == jazigo)
                             {
-                                l++;
-                                l = hash(l, andar);
+                                andares_cheios++;
+                                l = hash(hash(temp[a],andar)+andares_cheios, andar);
                             }
                             for(int b = 0; b<jazigo; b++)
                             {
                                 if(cemiterio[l].jazigos[b].estado == 0)
                                 {
-                                    add(cemiterio, l, b, id);
+                                    add(cemiterio, l, b, temp[a]);
                                     cemiterio[l].ocupados++;
                                     break;
-                                }      
+                                }
                             }
                         }
-                    }
-                    k++;
-                    k = hash(k, andar);
+                        k = hash (id, andar);
+                    } else k = hash(hash(id, andar)+andares_cheios, andar);                    
                 }
 
                 for(int j = 0; j<jazigo; j++)
                 {
                     if(cemiterio[k].jazigos[j].estado == 0)
                     {
-                        add(cemiterio, k, j, id);
+                        int number = add(cemiterio, k, j, id);
                         cemiterio[k].ocupados++;
+                        printf("%d.%d\n", k, number);
                         break;
-                    }                    
+                    }
+                                    
                 }
-                
+                           
             }
             else if(strcmp(function, "REM") == 0)
             {
-                //binary search and print
+                remover(cemiterio, id, jazigo, andar);
             }
             else if(strcmp(function, "QRY") == 0)
             {
-                //binary search and print
-            }         
+                query(cemiterio, id, jazigo, andar);
+            }
+            else if(strcmp(function, "PRT") == 0)
+            {
+                for(int j = 0; j<andar; j++)
+                {
+                    printf("L%d: ", j);
+                    for(int b = 0; b<jazigo; b++)
+                    {
+                        printf("%d(%d) ", cemiterio[j].jazigos[b].valor, cemiterio[j].jazigos[b].estado);
+                    }
+                    printf("\n");
+                }
+            }        
         }
-
     }
-
     return 0;
 }
 
+query_result query(Cemiterio cemiterio[], int val, int jazigo, int andar)
+{
+    int l;
+    int r;
+    int m = 0;
+    int i = 0;
+    int confirm_interaction = 0;
+    
+    while(i<andar)
+    {
+        l = 0; r = jazigo-1;
+        while(l<=r)
+        {
+            m = (l+r)/2;
+            if(cemiterio[i].jazigos[m].valor == val)
+            {
+                if(cemiterio[i].jazigos[m].estado == 2)
+                {
+                    printf("?.?\n");
+                    confirm_interaction = 1;
+                    break;
+                }
+                else
+                { 
+                    printf("%d.%d\n", i, m);
+                    confirm_interaction = 1;
+                    break;
+                }
+            } else if(val<cemiterio[i].jazigos[m].valor ||cemiterio[i].jazigos[m].valor == 0)
+            {
+                r = m-1;
+            } else l = m+1;
+        }
+        if(confirm_interaction == 1)
+        {
+            break;
+        }
+        i++;
+    }
+
+    if(i>= andar && confirm_interaction == 0)
+    {
+        printf("?.?\n");
+    }
+
+    query_result temp;
+    temp.andar = i;
+    temp.nmr_jazigo = m;
+    temp.interaction = confirm_interaction;
+    
+    return temp;
+}
+
+void remover(Cemiterio cemiterio[], int val, int jazigo, int andar)
+{
+    query_result remotion = query(cemiterio, val, jazigo, andar);
+    if(remotion.interaction!=0 && remotion.andar<andar)
+    {
+        cemiterio[remotion.andar].jazigos[remotion.nmr_jazigo].estado = 2;
+    }
+}
 int hash(int id, int andar)
 {
     int key;
@@ -149,47 +235,30 @@ int hash(int id, int andar)
     return key;
 }
 
-void sort(Cemiterio cemiterio[], int k, int inicio, int fim)
+int add(Cemiterio cemiterio[], int k, int j, int id)
 {
-    if(fim - inicio>1)
-    {
-        int pivot = partition(cemiterio, k, inicio, fim);
-        sort(cemiterio, k, inicio, pivot);
-        sort(cemiterio, k, (pivot+1), fim);
-    }
-}
+    int i = 0;
 
-void add(Cemiterio cemiterio[], int k, int j, int id)
-{
-    cemiterio[k].jazigos[j].valor = id;
-    cemiterio[k].jazigos[j].estado = 1;
-    sort(cemiterio, k, 0, j);
-}
-
-int partition(Cemiterio cemiterio[], int k, int inicio, int fim)
-{
-    int p = (inicio + fim)/2;
-    int temp =  cemiterio[k].jazigos[p].valor;
-    cemiterio[k].jazigos[p].valor = cemiterio[k].jazigos[inicio].valor;
-    cemiterio[k].jazigos[inicio].valor = temp;
-    int i = inicio; int j = fim-1;
     while(i<=j)
     {
-        while(i<fim && cemiterio[k].jazigos[i].valor<=cemiterio[k].jazigos[inicio].valor)
+        if(id<cemiterio[k].jazigos[i].valor)
         {
-            i++;
+            for(int f = j; f>i; f--)
+            {
+                cemiterio[k].jazigos[f].estado = cemiterio[k].jazigos[f-1].estado;
+                cemiterio[k].jazigos[f].valor = cemiterio[k].jazigos[f-1].valor;
+            }
+            cemiterio[k].jazigos[i].valor = id;
+            cemiterio[k].jazigos[i].estado = 1;
+            break;
         }
-        while(cemiterio[k].jazigos[j].valor>cemiterio[k].jazigos[inicio].valor)
+        else if(i == j || cemiterio[k].jazigos[i].valor == 0)
         {
-            j--;
+            cemiterio[k].jazigos[i].estado = 1;
+            cemiterio[k].jazigos[i].valor = id;
+            break;
         }
-        if(i<j)
-        {
-            int temp2 =  cemiterio[k].jazigos[i].valor;
-            cemiterio[k].jazigos[i].valor = cemiterio[k].jazigos[j].valor;
-            cemiterio[k].jazigos[j].valor = temp;
-        }
+        i++;
     }
-    return j;
+    return i;
 }
-

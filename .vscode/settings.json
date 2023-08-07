@@ -1,6 +1,11 @@
 {
     "files.associations": {
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "iostream": "cpp",
+        "ostream": "cpp",
+        "istream": "cpp",
+        "iosfwd": "cpp",
+        "xstring": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }

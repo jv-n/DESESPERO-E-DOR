@@ -17,6 +17,9 @@ class node
 };
 
 node* add(node* root, int id_val, int byte_val);
+int ranking(node* root, int val);
+node* rotate_left(node* root);
+node* rotate_right(node* root);
 
 int main ()
 {
@@ -53,10 +56,11 @@ int main ()
         {
             options >> num1;
             id = stoi(num1);
-            cout << ranking(root, id) << endl; 
+            int ranque = ranking(root, id);
+            cout << ranque << endl; 
         } else if (function == "WEI")
         {
-
+            cout << "Not there yet" << endl;
         }
     } while (function!= "END");
 
@@ -72,6 +76,7 @@ node* add(node* root, int id_val, int byte_val)
         temp->right = nullptr;
         temp->id = id_val;
         temp->peso = byte_val;
+        temp->rank = 0;
         temp->bf = 0;
         temp->altura = 1;
         return temp;
@@ -84,7 +89,7 @@ node* add(node* root, int id_val, int byte_val)
     }
     if(id_val<root->id)
     {
-        root->rank+=byte_val;
+        root->rank = root->rank + byte_val;
         root->left = add(root->left, id_val, byte_val);
         root->bf-=root->altura;
     } else
@@ -107,7 +112,7 @@ node* add(node* root, int id_val, int byte_val)
     {
         node* left = new node;
         left = root->left;
-        if(left->bf = 1)
+        if(left->bf == 1)
         {
             root->left = rotate_left(left);
             delete left;  
@@ -184,19 +189,27 @@ int ranking(node* root, int val)
 {
     node* cur = new node;
     cur = root;
+    int height = 0;
 
     while(cur->id!= val)
     {
         if(val<cur->id)
         {
             cur = cur->left;
+            height++;
         }
-        else cur = cur->right;
+        else 
+        {
+            cur = cur->right;
+            height++;
+        }
         if(cur == nullptr)
         {
+            cout << "-1 ";
             return 0;
         }
     }
 
+    cout << height << " ";
     return cur->rank;
 }
