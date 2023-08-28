@@ -5,46 +5,34 @@
 
 using namespace std;
 
-class node
-{
-    public:
-    int id;
-    int peso;
-    int rank;
-    node* left;
-    node* right;
-};
-
 int main ()
 {
-    string name;
-    string title;
+    int C;
+    
+    cin >> C;
 
-    cout << "Enter yor name: " << endl;
-    getline(cin, name);
-
-    stringstream count_name(name);
-    string last_name;
-    for(int i = 0; i<2; i++)
+    int** matriz = new int*();
+    for(int i = 0; i<(C*C); i++)
     {
-        count_name >> last_name;
+        matriz[i] = new int(C*C);
     }
 
-    cout << "Hello, Mr. " << last_name << endl << "Please, enter your title: ";
-
-    getline(cin, title);
-
-    stringstream count_title(title);
-    string first_title;
-
-    count_title >> first_title;
-    if(first_title.compare("President") == 0)
+    for (int i = 0; i<(C*C); i++)
     {
-        cout << "ACCESS GRANTED"<< endl <<"Welcome, Mr. " << first_title << endl;
-    } else if (first_title.compare("Chief") == 0 || first_title.compare("Secretary") == 0 )
+        for(int j = 0; j<(C*C); j++)
+        {
+            cin >> matriz[i][j]; 
+        }
+    }
+
+    for (int i = 0; i<(C*C); i++)
     {
-         cout << "ACCESS GRANTED"<< endl <<"Welcome, " << first_title << " " << last_name << endl;
-    } else cout << "ACCESS DENIED" << endl;
+        cout << endl;
+        for(int j = 0; j<(C*C); j++)
+        {
+            cout << matriz[i][j] << "\t"; 
+        }
+    }     
 
     return 0;
 }
