@@ -93,9 +93,9 @@ int main(){
             int remotion;
             cin >> remotion; 
 
-            celulas[arestas[remotion].y]->par = celulas[arestas[remotion].x]->par;
-                           
+            celulas[arestas[remotion].y]->par = celulas[arestas[remotion].x]->par; // fazer com union !!!!
         }
+
 
         for(int k = 0; k<Q; k++)
         {
@@ -106,11 +106,11 @@ int main(){
 
             if(celulas[start]->par == celulas[destino]->par)
             {
-                cout << endl << w << "." << k << " 1";
-            } else cout << endl<< w << "." << k << " 0";
-
+                cout << w << "." << k << " 1" << endl;
+            } else cout << w << "." << k << " 0" << endl;
+            
         }
-        
+        cout << endl;        
     }
 
     return 0;
