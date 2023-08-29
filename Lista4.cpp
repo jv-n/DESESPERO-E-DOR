@@ -21,13 +21,41 @@ class Celula
     int height;
 };
 
+Celula* find(Celula* cel)
+{
+    Celula* temp = cel;
+    while(temp->par!=temp)
+    {
+        temp = temp->par;
+    }
+    return temp;
+}
+
+Celula* united(Celula* x, Celula* y)
+{
+    Celula* raiz_a = find(x);
+    Celula* raiz_b = find(y);
+
+    if(raiz_a->height>=raiz_b->height)
+    {
+        raiz_b->par = raiz_a;
+        if(raiz_a->height == raiz_b->height)
+        {
+            raiz_a->height++;
+        }
+        return raiz_a;
+    } else{
+        raiz_a->par = raiz_b;
+        return raiz_b;
+    }
+}
+
 Celula* makeset(int val)
 {
     Celula* N = new Celula();
     N->val = val;
     N->par = N;
     N->height = 1;
-    
     return N;
 }
 
@@ -56,44 +84,48 @@ int main(){
         {
             if(i<(2*((maze_size*maze_size) - maze_size)))
             {
-            bool added_right = false;
-            if((x+1)%maze_size != 0)
-            {
-                arestas[i].x = x;
-                arestas[i].y = x+1;
-                added_right = true;
-                i++;
-            }
-            if(j == (maze_size-1))
-            {
-                j = 0;
-                x = x-(maze_size-1);
-                    
-                while(j<maze_size)
+                bool added_right = false;
+                if((x+1)%maze_size != 0)
                 {
                     arestas[i].x = x;
-                    arestas[i].y = x+maze_size;
-                      
+                    arestas[i].y = x+1;
+                    added_right = true;
                     i++;
+                }
+                if(j == (maze_size-1))
+                {
+                    j = 0;
+                    int z = x-(maze_size-1);
+                        
+                    while(j<maze_size)
+                    {
+                        arestas[i].x = z;
+                        arestas[i].y = z+maze_size;
+                        z++;
+                        i++;
+                        j++;
+                    }
+                    j = 0;
+                }
+                if(added_right)
+                {
                     j++;
                 }
-                j = 0;
-                x+=maze_size-1;
-            }
-            if(added_right)
-            {
-                j++;
-            }
             }     
 
         }
         
+        /*for(int l = 0; l<(2*((maze_size*maze_size) - maze_size)); l++)
+        {
+            printf("aresta.%d = %d,%d\n", l, arestas[l].x, arestas[l].y);
+        }*/
+
         for(int j =0; j<maze_walls; j++)
         {
             int remotion;
             cin >> remotion; 
 
-            celulas[arestas[remotion].y]->par = celulas[arestas[remotion].x]->par; // fazer com union !!!!
+            celulas[arestas[remotion].y]->par = united(celulas[arestas[remotion].x], celulas[arestas[remotion].y]); // fazer com union !!!!
         }
 
 
@@ -103,8 +135,10 @@ int main(){
             int destino;
 
             cin >> start >> destino;
-
-            if(celulas[start]->par == celulas[destino]->par)
+            Celula* x = find(celulas[start]);
+            Celula* y = find(celulas[destino]);
+            
+            if(x == y)
             {
                 cout << w << "." << k << " 1" << endl;
             } else cout << w << "." << k << " 0" << endl;
