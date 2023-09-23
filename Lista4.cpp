@@ -114,6 +114,14 @@ int main(){
             }     
 
         }
+<<<<<<< HEAD
+=======
+        
+        /*for(int l = 0; l<(2*((maze_size*maze_size) - maze_size)); l++)
+        {
+            printf("aresta.%d = %d,%d\n", l, arestas[l].x, arestas[l].y);
+        }*/
+>>>>>>> 38d1e83db0ad9ec86d30795a9307e1fc901a8bfa
 
         for(int j =0; j<maze_walls; j++)
         {
