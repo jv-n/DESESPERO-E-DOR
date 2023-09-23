@@ -6,7 +6,8 @@
         "istream": "cpp",
         "iosfwd": "cpp",
         "xstring": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "utility": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }
